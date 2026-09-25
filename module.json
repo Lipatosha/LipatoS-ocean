@@ -1,37 +1,24 @@
 {
-  "id": "lipatos-ocean",
-  "title": "LipatoS — Ocean RU",
-  "description": "Русская локализация Ocean 2.0.3: все 619 строк каталога, настройки воды, морские путешествия, корабли, пресеты, диагностические окна и дополнительные подписи интерфейса.",
-  "version": "1.0.1",
-  "authors": [
-    {
-      "name": "LipatoS",
-      "url": "https://github.com/Lipatosha"
-    },
-    {
-      "name": "Reslin",
-      "url": "https://www.patreon.com/Reslinfvtt"
-    }
-  ],
-  "url": "https://github.com/Lipatosha/LipatoS-ocean",
-  "manifest": "https://github.com/Lipatosha/LipatoS-ocean/releases/latest/download/module.json",
-  "download": "https://github.com/Lipatosha/LipatoS-ocean/releases/latest/download/lipatos-ocean.zip",
+  "id": "ocean",
+  "title": "Ocean — Water & Sea Simulator",
+  "description": "Turn any Foundry Region into living, procedural water. A GPU FFT ocean surface with real-time scene light, reflections and sun glitter; 3D ships that cast real shadows and ride the swell; and true interactive ripples when tokens wade through. One Region, and you have an ocean, a lake, a river, or a still pool in the dungeon.",
+  "version": "2.0.3",
+  "manifest": "https://r2.foundryvtt.com/packages-public/ocean/module.json",
+  "url": "https://www.patreon.com/Reslinfvtt",
   "compatibility": {
-    "minimum": "14",
+    "minimum": "13",
     "verified": "14",
     "maximum": "14"
   },
+  "authors": [
+    {
+      "name": "Reslin"
+    }
+  ],
+  "socket": false,
+  "protected": true,
   "relationships": {
     "requires": [
-      {
-        "id": "ocean",
-        "type": "module",
-        "manifest": "https://r2.foundryvtt.com/packages-public/ocean/module.json",
-        "compatibility": {
-          "minimum": "2.0.3",
-          "verified": "2.0.3"
-        }
-      },
       {
         "id": "scenic3d",
         "type": "module",
@@ -43,14 +30,23 @@
     ]
   },
   "esmodules": [
-    "scripts/ru-runtime.mjs"
+    "scripts/ocean.mjs"
   ],
   "languages": [
     {
-      "lang": "ru",
-      "name": "Русский",
-      "path": "lang/ru.json"
+      "lang": "en",
+      "name": "English",
+      "path": "lang/en.json"
+    },
+    {
+      "lang": "cn",
+      "name": "简体中文",
+      "path": "lang/cn.json"
     }
   ],
-  "socket": false
+  "documentTypes": {
+    "RegionBehavior": {
+      "water": {}
+    }
+  }
 }
