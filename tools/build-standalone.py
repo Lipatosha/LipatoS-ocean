@@ -19,7 +19,7 @@ ROOT = pathlib.Path(__file__).resolve().parents[1]
 OCEAN = ROOT / "upstream" / "ocean"
 SCENIC = ROOT / "upstream" / "scenic3d"
 OUTPUT = ROOT / "dist" / "ocean"
-VERSION = "2.0.0"
+VERSION = "2.1.0"
 REQUIRED_OCEAN = [
     "scripts/ocean.mjs",
     "scripts/settings.mjs",
