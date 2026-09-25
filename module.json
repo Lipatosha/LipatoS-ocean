@@ -1,0 +1,59 @@
+{
+  "id": "lipatos-ocean",
+  "title": "LipatoS — Ocean RU",
+  "description": "Русская локализация Ocean 2.0.3: все 619 строк каталога, настройки воды, морские путешествия, корабли, пресеты, диагностические окна и дополнительные подписи интерфейса.",
+  "version": "1.0.0",
+  "authors": [
+    {
+      "name": "LipatoS",
+      "url": "https://github.com/Lipatosha"
+    },
+    {
+      "name": "Reslin",
+      "url": "https://www.patreon.com/Reslinfvtt",
+      "flags": {
+        "originalAuthor": true
+      }
+    }
+  ],
+  "url": "https://github.com/Lipatosha/LipatoS-ocean",
+  "manifest": "https://github.com/Lipatosha/LipatoS-ocean/releases/latest/download/module.json",
+  "download": "https://github.com/Lipatosha/LipatoS-ocean/releases/latest/download/lipatos-ocean.zip",
+  "compatibility": {
+    "minimum": "14",
+    "verified": "14",
+    "maximum": "14"
+  },
+  "relationships": {
+    "requires": [
+      {
+        "id": "ocean",
+        "type": "module",
+        "manifest": "https://r2.foundryvtt.com/packages-public/ocean/module.json",
+        "compatibility": {
+          "minimum": "2.0.3",
+          "verified": "2.0.3"
+        }
+      },
+      {
+        "id": "scenic3d",
+        "type": "module",
+        "manifest": "https://r2.foundryvtt.com/packages-public/scenic3d/module.json",
+        "compatibility": {
+          "minimum": "1.0.3"
+        }
+      }
+    ]
+  },
+  "esmodules": [
+    "scripts/ru-runtime.mjs"
+  ],
+  "languages": [
+    {
+      "lang": "ru",
+      "name": "Русский",
+      "path": "lang/ru.json"
+    }
+  ],
+  "socket": false
+}
