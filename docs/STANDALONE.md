@@ -7,15 +7,15 @@
 Требуются локальные исходные пакеты Ocean 2.0.3 и Scenic3D 1.0.3. В корне клона репозитория:
 
 ```bash
-python tools/import-owned-source.py --ocean /path/to/ocean.zip --scenic3d /path/to/scenic3d.zip --confirm-scenic3d-rights
+python tools/import-owned-source.py --ocean /path/to/ocean.zip --scenic3d /path/to/scenic3d.zip
 git add upstream
 git commit -m "Import owned Ocean and Scenic3D source"
 git push origin main
 ```
 
-Скрипт распакует исходники в `upstream/ocean/` и `upstream/scenic3d/`, не добавляя ZIP в репозиторий и не подменяя готовую локализацию. Подтверждение требуется потому, что репозиторий публичный, а лицензия Scenic3D указывает отдельное авторское право разработчика.
+Скрипт распакует исходники в `upstream/ocean/` и `upstream/scenic3d/`, не добавляя ZIP в репозиторий и не подменяя готовую локализацию. Права на публикацию исходников Ocean и Scenic3D подтверждены владельцем проекта. Импорт сохраняет файлы поштучно, а не добавляет ZIP в репозиторий.
 
-## Следующий релиз
+## Самостоятельный релиз v2.1.0
 
 1. Объединить движок и локализацию; сохранить стабильный идентификатор `ocean` для настроек и существующих сцен.
 2. Встроить 3D-рендерер и выбор корабля из доступных правомерно используемых исходников.
