@@ -1,6 +1,8 @@
 name: Build standalone LipatoS Ocean
 
 on:
+  release:
+    types: [published]
   workflow_dispatch:
 
 permissions:
@@ -12,6 +14,7 @@ concurrency:
 
 jobs:
   standalone:
+    if: github.event_name == 'workflow_dispatch' || github.event.release.tag_name == 'source-import'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -19,25 +22,44 @@ jobs:
       - name: Validate build tooling
         shell: bash
         run: |
-          python -m py_compile tools/build-standalone.py tools/import-owned-source.py
+          set -euo pipefail
+          python -m py_compile tools/build-standalone.py
 
-      - name: Check original source import
-        id: source
+      - name: Download owned source packages
+        env:
+          GH_TOKEN: ${{ github.token }}
         shell: bash
         run: |
-          if test -f upstream/ocean/scripts/ocean.mjs &&
-             test -f upstream/ocean/assets/model/ship_aa/scene.bin &&
-             test -f upstream/scenic3d/scripts/scenic3d.mjs &&
-             test -f upstream/scenic3d/lib/three.module.js; then
-            echo "ready=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "ready=false" >> "$GITHUB_OUTPUT"
-            echo "::error::Исходные файлы Ocean и Scenic3D отсутствуют в upstream/. Полноценный релиз нельзя собрать из одного русификатора."
-            exit 1
-          fi
+          set -euo pipefail
+          rm -rf .source upstream
+          mkdir -p .source upstream
+          gh release download source-import --repo "$GITHUB_REPOSITORY" --dir .source
+          OCEAN_ZIP="$(find .source -maxdepth 1 -type f -iname 'ocean*.zip' | head -n1)"
+          SCENIC_ZIP="$(find .source -maxdepth 1 -type f -iname 'scenic3d*.zip' | head -n1)"
+          test -n "$OCEAN_ZIP" && test -n "$SCENIC_ZIP"
+          python - "$OCEAN_ZIP" "$SCENIC_ZIP" <<'PY'
+          import pathlib, shutil, sys, zipfile
+          dest = pathlib.Path("upstream")
+          for archive, expected in [(sys.argv[1], "ocean"), (sys.argv[2], "scenic3d")]:
+              with zipfile.ZipFile(archive) as z:
+                  files=[i for i in z.infolist() if not i.is_dir()]
+                  if not files or not all(i.filename.startswith(expected + "/") for i in files):
+                      raise SystemExit(f"{archive}: expected root {expected}/")
+                  for item in files:
+                      rel=pathlib.PurePosixPath(*pathlib.PurePosixPath(item.filename).parts[1:])
+                      if not rel.parts or ".." in rel.parts or rel.name=="signature.json":
+                          continue
+                      target=dest/expected/pathlib.Path(*rel.parts)
+                      target.parent.mkdir(parents=True, exist_ok=True)
+                      with z.open(item) as src, target.open("wb") as out:
+                          shutil.copyfileobj(src,out,1024*1024)
+          PY
+          test -f upstream/ocean/scripts/ocean.mjs
+          test -f upstream/ocean/assets/model/ship_aa/scene.bin
+          test -f upstream/scenic3d/scripts/scenic3d.mjs
+          test -f upstream/scenic3d/lib/three.module.js
 
       - name: Assemble standalone module
-        if: steps.source.outputs.ready == 'true'
         shell: bash
         run: |
           set -euo pipefail
@@ -55,7 +77,6 @@ jobs:
           PY
 
       - name: Build installable module
-        if: steps.source.outputs.ready == 'true'
         shell: bash
         run: |
           set -euo pipefail
@@ -63,8 +84,7 @@ jobs:
           zip -qr ../../lipatos-ocean.zip .
           test "$(stat -c%s ../../lipatos-ocean.zip)" -gt 300000000
 
-      - name: Update repository manifest and publish release
-        if: steps.source.outputs.ready == 'true'
+      - name: Publish standalone v2.1.0
         env:
           GH_TOKEN: ${{ github.token }}
         shell: bash
@@ -72,8 +92,8 @@ jobs:
           set -euo pipefail
           TAG=v2.1.0
           if gh release view "$TAG" >/dev/null 2>&1; then
-            echo "::notice::Release $TAG already exists; not overwriting assets."
-            exit 0
+            gh release delete "$TAG" --yes
+            git push --delete origin "$TAG" || true
           fi
           cp dist/ocean/module.json module.json
           cp docs/README-STANDALONE.md README.md
@@ -89,4 +109,4 @@ jobs:
             lipatos-ocean.zip dist/ocean/module.json#module.json \
             --target "$TARGET" \
             --title "LipatoS — Ocean v2.1.0" \
-            --notes "Самостоятельный русскоязычный Ocean со встроенным Scenic3D. Не требует установки ocean или scenic3d отдельно. Сохранён ID ocean для совместимости с мирами; прежний модуль lipatos-ocean 1.0.x необходимо отключить."
+            --notes "Самостоятельный русскоязычный Ocean со встроенным Scenic3D. Отдельные Ocean и Scenic3D не требуются. Сохранён ID ocean для совместимости с существующими мирами."
