@@ -1,0 +1,13 @@
+# Local build and test artifacts
+node_modules/
+dist/
+coverage/
+.cache/
+*.log
+.DS_Store
+Thumbs.db
+
+# Source package is not tracked; unpacked module files will be committed individually.
+*.zip
+*.7z
+*.rar
