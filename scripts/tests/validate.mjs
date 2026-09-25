@@ -30,7 +30,7 @@ for (const key of [
 ]) assert.ok(catalog[key].includes("{name}"), `Missing scene-name placeholder: ${key}`);
 
 const knownStrings = Object.assign({}, SHIP_STRINGS_RU, SHIP_CATALOG_RU, SHIP_FAMILY_RU, MESSAGES_RU);
-assert.equal(Object.keys(knownStrings).length, 473, "All hard-coded UI replacements must be included");
+assert.equal(Object.keys(knownStrings).length, 494, "All hard-coded UI replacements must be included");
 for (const [key, value] of Object.entries(knownStrings)) {
   assert.ok(key.trim() && value.trim(), "Empty hard-coded replacement");
   assert.ok(/\p{Script=Cyrillic}/u.test(value), `Non-Russian UI replacement: ${key}`);
