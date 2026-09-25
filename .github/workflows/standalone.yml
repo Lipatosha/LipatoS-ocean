@@ -39,7 +39,8 @@ jobs:
             echo "ready=true" >> "$GITHUB_OUTPUT"
           else
             echo "ready=false" >> "$GITHUB_OUTPUT"
-            echo "::notice::Исходные файлы ещё не загружены поштучно в upstream/. Публикация самостоятельного релиза запрещена."
+            echo "::error::Исходные файлы Ocean и Scenic3D отсутствуют в upstream/. Полноценный релиз нельзя собрать из одного русификатора."
+            exit 1
           fi
 
       - name: Assemble standalone module
