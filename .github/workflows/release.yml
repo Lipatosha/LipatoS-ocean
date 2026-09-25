@@ -1,11 +1,6 @@
 name: Release LipatoS Ocean RU
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - ".github/workflows/release.yml"
-      - "module.json"
   workflow_dispatch:
 
 permissions:
