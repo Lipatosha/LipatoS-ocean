@@ -53,7 +53,7 @@ jobs:
           python - <<'PY'
           import json, pathlib
           m=json.loads(pathlib.Path("dist/ocean/module.json").read_text())
-          assert m["id"] == "ocean" and m["version"] == "2.0.0"
+          assert m["id"] == "ocean" and m["version"] == "2.1.0"
           assert not m.get("relationships",{}).get("requires")
           assert len(m["esmodules"]) == 3
           assert len(json.loads(pathlib.Path("dist/ocean/lang/ru.json").read_text())) == 686
@@ -76,7 +76,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          TAG=v2.0.0
+          TAG=v2.1.0
           if gh release view "$TAG" >/dev/null 2>&1; then
             echo "::notice::Release $TAG already exists; not overwriting assets."
             exit 0
@@ -87,12 +87,12 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add module.json README.md
           if ! git diff --cached --quiet; then
-            git commit -m "Switch to standalone Ocean 2.0.0"
+            git commit -m "Switch to standalone Ocean 2.1.0"
             git push origin HEAD:main
           fi
           TARGET="$(git rev-parse HEAD)"
           gh release create "$TAG" \
             lipatos-ocean.zip dist/ocean/module.json#module.json \
             --target "$TARGET" \
-            --title "LipatoS — Ocean v2.0.0" \
+            --title "LipatoS — Ocean v2.1.0" \
             --notes "Самостоятельный русскоязычный Ocean со встроенным Scenic3D. Не требует установки ocean или scenic3d отдельно. Сохранён ID ocean для совместимости с мирами; прежний модуль lipatos-ocean 1.0.x необходимо отключить."
