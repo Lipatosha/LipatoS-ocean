@@ -1,0 +1,69 @@
+<form class="osw">
+  <style>
+    /* 单船尾迹面板:跟主控制台同一套液态玻璃语汇,独立 scoped(osw-) */
+    .ocean-ship-wake-panel.application {
+      background: linear-gradient(165deg, rgba(18, 44, 56, 0.66), rgba(7, 20, 27, 0.7));
+      backdrop-filter: blur(18px) saturate(150%);
+      -webkit-backdrop-filter: blur(18px) saturate(150%);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      border-radius: 16px;
+      box-shadow: 0 16px 48px rgba(0, 0, 0, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.2);
+      color: #e0eef3;
+    }
+    .ocean-ship-wake-panel .window-header { background: rgba(255, 255, 255, 0.04); border-bottom: 1px solid rgba(255, 255, 255, 0.16); }
+    .ocean-ship-wake-panel .window-content { background: transparent; padding: 12px 14px 14px; color: #e0eef3; }
+
+    .osw-ship { display: flex; align-items: center; gap: 8px; padding: 8px 11px; margin-bottom: 10px; border: 1px solid rgba(94, 200, 224, 0.45); border-radius: 10px; background: rgba(94, 200, 224, 0.10); font-size: 13px; font-weight: 700; }
+    .osw-ship i { color: #5ec8e0; }
+    .osw-ship__type { margin-left: auto; font-size: 10.5px; font-weight: 500; color: #7c97a2; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 55%; }
+    .osw-hint { font-size: 11px; color: #7c97a2; line-height: 1.4; margin: 0 2px 10px; }
+
+    .osw-row { display: grid; grid-template-columns: minmax(96px, 0.9fr) minmax(0, 1.3fr); gap: 10px; align-items: center; padding: 6px 4px; border-bottom: 1px solid rgba(140, 200, 220, 0.09); }
+    .osw-row__label { font-size: 12px; font-weight: 600; color: #a7c0cb; display: flex; align-items: center; gap: 6px; min-width: 0; overflow-wrap: anywhere; }
+    .osw-dot { width: 6px; height: 6px; border-radius: 50%; background: #ffcf85; flex: none; }
+    .osw-row__ctl { display: flex; align-items: center; gap: 8px; min-width: 0; }
+    .osw-row__ctl input[type="range"] { flex: 1; min-width: 0; cursor: pointer; }
+    .osw-row__ctl input[type="checkbox"] { width: 16px; height: 16px; accent-color: #5ec8e0; cursor: pointer; }
+    .osw-val { font-variant-numeric: tabular-nums; font-size: 11px; min-width: 40px; text-align: center; padding: 3px 0; border-radius: 5px; background: rgba(4, 14, 19, 0.55); border: 1px solid rgba(255, 255, 255, 0.16); }
+
+    .osw-sub { display: flex; align-items: center; gap: 7px; margin: 11px 0 3px; font-size: 11px; font-weight: 700; letter-spacing: 0.5px; color: #e0eef3; }
+    .osw-sub::before { content: ""; width: 3px; height: 11px; border-radius: 2px; background: #5ec8e0; }
+
+    .osw-foot { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-top: 12px; padding-top: 10px; border-top: 1px solid rgba(255, 255, 255, 0.16); }
+    .osw-foot__legend { font-size: 10.5px; color: #7c97a2; display: flex; align-items: center; gap: 5px; }
+    .osw-foot button { height: 28px; padding: 0 12px; font-size: 12px; font-weight: 600; color: #ffcf85; background: rgba(255, 207, 133, 0.10); border: 1px solid rgba(255, 207, 133, 0.4); border-radius: 8px; cursor: pointer; }
+    .osw-foot button:hover { background: rgba(255, 207, 133, 0.22); }
+    .osw-foot button[disabled] { opacity: 0.4; cursor: default; }
+  </style>
+
+  <div class="osw-ship">
+    <i class="fa-solid fa-sailboat"></i><span>{{name}}</span>
+    {{#if typeName}}<span class="osw-ship__type">{{typeName}}{{#if typeCount}} · {{localize "OCEAN.shipWake.typeCount"}} {{typeCount}}{{/if}}</span>{{/if}}
+  </div>
+  <p class="osw-hint">{{localize "OCEAN.shipWake.hint"}}</p>
+
+  {{#each groups}}
+    <div class="osw-sub">{{label}}</div>
+    {{#each rows}}
+      <div class="osw-row">
+        <div class="osw-row__label">{{#if overridden}}<span class="osw-dot" title="{{localize "OCEAN.shipWake.overridden"}}"></span>{{/if}}{{label}}</div>
+        <div class="osw-row__ctl">
+          <input type="range" data-sw-range="{{key}}" min="{{min}}" max="{{max}}" step="{{step}}" value="{{value}}">
+          <span class="osw-val" data-sw-value="{{key}}">{{valueLabel}}</span>
+        </div>
+      </div>
+    {{/each}}
+  {{/each}}
+
+  <div class="osw-row">
+    <div class="osw-row__label">{{#if sideFoam.overridden}}<span class="osw-dot" title="{{localize "OCEAN.shipWake.overridden"}}"></span>{{/if}}{{localize "OCEAN.control.ships.sideWake"}}</div>
+    <div class="osw-row__ctl"><input type="checkbox" data-sw-check="sideFoam" {{#if sideFoam.checked}}checked{{/if}}></div>
+  </div>
+
+  <div class="osw-foot">
+    <span class="osw-foot__legend"><span class="osw-dot"></span>{{localize "OCEAN.shipWake.overridden"}}</span>
+    <span style="flex:1"></span>
+    {{#if canBake}}<button type="button" data-action="bake-type" data-tooltip="OCEAN.shipWake.bakeHint">{{localize "OCEAN.shipWake.bake"}}</button>{{/if}}
+    <button type="button" data-action="reset-ship" {{#unless hasCustom}}disabled{{/unless}}>{{localize "OCEAN.shipWake.reset"}}</button>
+  </div>
+</form>

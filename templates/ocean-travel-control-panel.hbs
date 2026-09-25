@@ -1,0 +1,272 @@
+<form class="otcp" autocomplete="off">
+  <style>
+    .otcp {
+      --ot-bg: rgba(5, 16, 24, 0.97);
+      --ot-panel: rgba(21, 47, 59, 0.54);
+      --ot-line: rgba(142, 205, 222, 0.18);
+      --ot-text: #e5f4f7;
+      --ot-dim: #98b5bf;
+      --ot-accent: #68d0e5;
+      --ot-gold: #efc47f;
+      height: 100%;
+      min-height: 0;
+      container-type: inline-size;
+      display: flex;
+      flex-direction: column;
+      color: var(--ot-text);
+      background: radial-gradient(circle at 12% 0%, rgba(38, 111, 131, 0.3), transparent 40%), var(--ot-bg);
+      overflow: hidden;
+    }
+    .otcp button, .otcp select, .otcp input { font-family: inherit; }
+    .otcp-head { display: flex; align-items: center; gap: 11px; padding: 12px 14px; border-bottom: 1px solid var(--ot-line); }
+    .otcp-mode { display: inline-flex; align-items: center; gap: 6px; padding: 6px 9px; border: 1px solid rgba(239, 196, 127, 0.38); border-radius: 7px; color: var(--ot-gold); background: rgba(239, 196, 127, 0.08); font-size: 11px; font-weight: 700; }
+    .otcp-title { min-width: 0; flex: 1; }
+    .otcp-title strong, .otcp-title span { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .otcp-title strong { font-size: 13px; }
+    .otcp-title span { margin-top: 2px; color: var(--ot-dim); font-size: 10.5px; }
+    .otcp-clock { flex: none; color: var(--ot-accent); font: 700 12px/1.2 ui-monospace, monospace; }
+    .otcp-section-title { display: flex; align-items: center; gap: 7px; margin-bottom: 8px; color: var(--ot-dim); font-size: 10px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; }
+    .otcp-section-title i { color: var(--ot-accent); }
+    .otcp-camera-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+    .otcp-camera { min-width: 0; height: 48px; display: grid; place-items: center; gap: 2px; padding: 5px; border: 1px solid var(--ot-line); border-radius: 7px; color: var(--ot-dim); background: rgba(7, 24, 32, 0.72); cursor: pointer; font-size: 10.5px; }
+    .otcp-camera i { color: #bdd2d8; font-size: 13px; }
+    .otcp-camera:hover { color: var(--ot-text); border-color: rgba(104, 208, 229, 0.42); }
+    .otcp-camera.is-active { color: #eafbff; border-color: rgba(104, 208, 229, 0.7); background: linear-gradient(180deg, rgba(65, 157, 179, 0.32), rgba(28, 91, 107, 0.26)); box-shadow: inset 0 0 0 1px rgba(104, 208, 229, 0.12); }
+    .otcp-camera.is-active i { color: var(--ot-accent); }
+    .otcp-camera:disabled { opacity: 0.45; cursor: not-allowed; }
+    .otcp-presets { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 6px; margin-top: 11px; }
+    .otcp-presets select, .otcp-preset-editor input { min-width: 0; height: 30px; padding: 0 8px; border: 1px solid var(--ot-line); border-radius: 7px; color: var(--ot-text); background: rgba(4, 18, 25, 0.66); }
+    .otcp-presets button, .otcp-preset-editor button { height: 30px; padding: 0 10px; border: 1px solid rgba(104, 208, 229, 0.38); border-radius: 7px; color: var(--ot-text); background: rgba(38, 116, 136, 0.28); cursor: pointer; font-size: 10px; white-space: nowrap; }
+    .otcp-presets button:disabled, .otcp-preset-editor button:disabled { opacity: 0.45; cursor: not-allowed; }
+    .otcp-presets .is-danger, .otcp-preset-editor .is-danger { color: #ffd8d3; border-color: rgba(238, 112, 96, 0.5); background: rgba(135, 45, 37, 0.3); }
+    .otcp-preset-editor { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; gap: 6px; margin-top: 6px; }
+    .otcp-preset-confirm { display: flex; align-items: center; gap: 8px; min-width: 0; padding-left: 8px; color: #d9c4bf; font-size: 10px; }
+    .otcp-preset-confirm span { min-width: 0; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .otcp-local { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 10px; align-items: end; margin-top: 11px; }
+    .otcp-quality { display: grid; grid-template-columns: repeat(3, 1fr); border: 1px solid var(--ot-line); border-radius: 7px; overflow: hidden; }
+    .otcp-quality button { min-width: 0; height: 29px; padding: 0 5px; border: 0; border-right: 1px solid var(--ot-line); color: var(--ot-dim); background: rgba(4, 18, 25, 0.66); cursor: pointer; font-size: 10px; }
+    .otcp-quality button:last-child { border-right: 0; }
+    .otcp-quality button.is-active { color: #061319; background: var(--ot-accent); font-weight: 800; }
+    .otcp-toggle { height: 31px; display: flex; align-items: center; gap: 8px; padding: 0 9px; border: 1px solid var(--ot-line); border-radius: 7px; color: var(--ot-dim); background: rgba(4, 18, 25, 0.66); cursor: pointer; font-size: 10.5px; white-space: nowrap; }
+    .otcp-toggle.is-readonly { cursor: default; }
+    .otcp-toggle input { width: 14px; height: 14px; margin: 0; accent-color: var(--ot-accent); }
+    .otcp-warning { margin-top: 9px; color: #b9aa91; font-size: 9.5px; line-height: 1.35; }
+    .otcp-warning i { margin-right: 5px; color: var(--ot-gold); }
+    .otcp-tabs { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); padding: 0 14px; border-bottom: 1px solid var(--ot-line); background: rgba(3, 14, 20, 0.46); }
+    .otcp-tab { height: 39px; border: 0; border-bottom: 2px solid transparent; color: var(--ot-dim); background: transparent; cursor: pointer; font-size: 11px; font-weight: 700; }
+    .otcp-tab i { margin-right: 6px; }
+    .otcp-tab.is-active { color: var(--ot-text); border-bottom-color: var(--ot-accent); }
+    .otcp-scroll { flex: 1; min-height: 0; overflow-y: auto; padding: 11px 14px 18px; scrollbar-color: rgba(104, 208, 229, 0.35) transparent; }
+    .otcp-group { border: 1px solid var(--ot-line); border-radius: 9px; background: var(--ot-panel); overflow: hidden; }
+    .otcp-group__head { display: flex; align-items: center; gap: 8px; padding: 9px 11px; color: var(--ot-text); font-size: 11.5px; font-weight: 800; background: rgba(89, 180, 204, 0.08); }
+    .otcp-group__head i { width: 15px; color: var(--ot-accent); text-align: center; }
+    .otcp-row { display: grid; grid-template-columns: minmax(110px, 0.85fr) minmax(0, 1.15fr); gap: 11px; align-items: center; min-height: 44px; padding: 7px 11px; border-top: 1px solid rgba(139, 201, 220, 0.09); }
+    .otcp-row__label { min-width: 0; color: var(--ot-dim); font-size: 11px; font-weight: 600; }
+    .otcp-row__control { display: flex; align-items: center; gap: 7px; min-width: 0; }
+    .otcp-row select { width: 100%; min-width: 0; height: 28px; padding: 0 7px; color: var(--ot-text); border: 1px solid var(--ot-line); border-radius: 6px; background: rgba(3, 13, 19, 0.68); }
+    .otcp-ship-picker { width: 100%; min-width: 0; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 6px; }
+    .otcp-ship-picker__name { min-width: 0; height: 28px; display: flex; align-items: center; padding: 0 8px; border: 1px solid var(--ot-line); border-radius: 6px; color: var(--ot-text); background: rgba(3, 13, 19, 0.68); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 10.5px; }
+    .otcp-ship-picker button { height: 28px; display: inline-flex; align-items: center; gap: 5px; padding: 0 9px; border: 1px solid rgba(104, 208, 229, 0.38); border-radius: 6px; color: #dff9ff; background: rgba(38, 116, 136, 0.34); cursor: pointer; font-size: 10.5px; white-space: nowrap; }
+    .otcp-ship-picker button:hover { border-color: rgba(104, 208, 229, 0.7); background: rgba(46, 139, 162, 0.46); }
+    .otcp-ship-picker button:disabled { opacity: 0.45; cursor: not-allowed; }
+    .otcp-row input[type="range"] { flex: 1; min-width: 0; accent-color: var(--ot-accent); }
+    .otcp-row input[type="color"] { width: 100%; height: 28px; padding: 2px; border: 1px solid var(--ot-line); border-radius: 6px; background: rgba(3, 13, 19, 0.68); }
+    .otcp-value { min-width: 46px; padding: 3px 5px; border: 1px solid var(--ot-line); border-radius: 5px; color: var(--ot-text); background: rgba(3, 13, 19, 0.54); text-align: center; font: 10px/1.3 ui-monospace, monospace; }
+    .otcp-advanced { border-top: 1px solid var(--ot-line); }
+    .otcp-advanced summary { display: flex; align-items: center; gap: 7px; padding: 9px 11px; color: var(--ot-dim); cursor: pointer; list-style: none; font-size: 10.5px; font-weight: 700; }
+    .otcp-advanced summary::-webkit-details-marker { display: none; }
+    .otcp-advanced summary i { color: var(--ot-accent); }
+    .otcp-missing { padding: 24px; color: var(--ot-dim); text-align: center; }
+    @container (max-width: 460px) {
+      .otcp-camera-grid { grid-template-columns: repeat(2, 1fr); }
+      .otcp-local { grid-template-columns: 1fr; }
+      .otcp-row { grid-template-columns: 1fr; gap: 5px; }
+    }
+    .otcp-workspaces { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; padding: 10px 14px; border-bottom: 1px solid var(--ot-line); background: rgba(2, 11, 17, .4); }
+    .otcp-workspace { min-width: 0; min-height: 40px; border: 1px solid transparent; border-radius: 7px; color: var(--ot-dim); background: transparent; font-size: 13px; font-weight: 700; cursor: pointer; }
+    .otcp-workspace i { margin-right: 8px; }
+    .otcp-workspace.is-active { color: #eafbff; border-color: rgba(104, 208, 229, .48); background: rgba(51, 132, 152, .28); }
+    .otcp-workspace:hover { color: var(--ot-text); background: rgba(51, 132, 152, .16); }
+    .otcp button:focus-visible, .otcp input:focus-visible, .otcp select:focus-visible, .otcp summary:focus-visible { outline: 2px solid var(--ot-accent); outline-offset: 2px; }
+    .otcp button { flex-shrink: 0; }
+    .otcp-head, .otcp-workspaces, .otcp-tabs { flex-shrink: 0; }
+    .otcp-scroll > .otcp-group + .otcp-group { margin-top: 14px; }
+    .otcp-group__body { padding: 12px; }
+    .otcp-group__body > .otcp-presets:first-child { margin-top: 0; }
+    .otcp-group__body > .otcp-local:first-child { margin-top: 0; }
+    .otcp-group__body > .otcp-warning:first-child { margin-top: 0; }
+    .otcp-camera { height: 62px; font-size: 12px; }
+    .otcp-camera i { font-size: 16px; }
+    .otcp-section-title { font-size: 11px; letter-spacing: .03em; }
+    .otcp-row__label { font-size: 12px; }
+    .otcp-toggle { height: 34px; font-size: 12px; }
+    .otcp-warning { font-size: 11px; line-height: 1.5; }
+    .otcp-presets select, .otcp-presets button, .otcp-preset-editor input, .otcp-preset-editor button { height: 34px; font-size: 12px; }
+    .otcp-preset-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+    .otcp-preset-actions button { min-height: 34px; padding: 0 10px; border: 1px solid var(--ot-line); border-radius: 7px; color: var(--ot-text); background: rgba(38,116,136,.2); cursor: pointer; font-size: 12px; }
+    .otcp-preset-actions button:disabled { opacity: .45; cursor: not-allowed; }
+    .otcp-preset-actions .is-danger { color: #ffd8d3; border-color: rgba(238,112,96,.4); }
+    .otcp-setting-line { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+    .otcp-setting-line .otcp-warning { margin: 0; }
+    .otcp-edit-hint { margin: 0 0 10px; color: var(--ot-dim); font-size: 11px; }
+    @container (max-width: 460px) {
+      .otcp-tab { font-size: 10px; padding: 0 2px; }
+      .otcp-tab i { display: none; }
+      .otcp-setting-line { align-items: start; flex-direction: column; }
+      .otcp-preset-editor { grid-template-columns: 1fr 1fr; }
+      .otcp-preset-editor input { grid-column: 1 / -1; }
+    }
+  </style>
+  {{#*inline "travelControl"}}
+    {{#if visible}}            <div class="otcp-row">
+              <label class="otcp-row__label" for="otcp-{{scope}}-{{field}}" data-tooltip="{{hint}}">{{label}}</label>
+              <div class="otcp-row__control">
+                {{#if isSelect}}<select id="otcp-{{scope}}-{{field}}" data-travel-scope="{{scope}}" data-travel-field="{{field}}" {{#if disabled}}disabled{{/if}}>{{#each options}}<option value="{{value}}" {{#if selected}}selected{{/if}}>{{label}}</option>{{/each}}</select>{{/if}}
+                {{#if isShipPicker}}
+                  {{#if shipPickerAvailable}}
+                    <div class="otcp-ship-picker">
+                      <span class="otcp-ship-picker__name">{{valueLabel}}</span>
+                      <button type="button" id="otcp-{{scope}}-{{field}}" data-travel-ship-picker {{#if disabled}}disabled{{/if}}><i class="fa-solid fa-sailboat"></i>{{localize "OCEAN.travel.chooseShip"}}</button>
+                    </div>
+                  {{else}}
+                    <select id="otcp-{{scope}}-{{field}}" data-travel-scope="{{scope}}" data-travel-field="{{field}}" {{#if disabled}}disabled{{/if}}>{{#each options}}<option value="{{value}}" {{#if selected}}selected{{/if}}>{{label}}</option>{{/each}}</select>
+                  {{/if}}
+                {{/if}}
+                {{#if isRange}}<input id="otcp-{{scope}}-{{field}}" type="range" data-travel-scope="{{scope}}" data-travel-field="{{field}}" min="{{min}}" max="{{max}}" step="{{step}}" value="{{value}}" {{#if disabled}}disabled{{/if}}><span class="otcp-value" data-travel-value="{{scope}}.{{field}}">{{valueLabel}}</span>{{/if}}
+                {{#if isColor}}<input id="otcp-{{scope}}-{{field}}" type="color" data-travel-scope="{{scope}}" data-travel-field="{{field}}" value="{{value}}" {{#if disabled}}disabled{{/if}}>{{/if}}
+              </div>
+            </div>
+{{/if}}
+  {{/inline}}
+  {{#if missing}}
+    <div class="otcp-missing">{{localize "OCEAN.travel.notTravelScene"}}</div>
+  {{else}}
+    <header class="otcp-head">
+      <div class="otcp-mode"><i class="fa-solid fa-ship"></i> {{localize "OCEAN.travel.mode"}}</div>
+      <div class="otcp-title"><strong>{{sceneName}}</strong><span>{{#if canvasBackgroundMode}}{{localize "OCEAN.travel.sceneCanvasBackground"}}{{else}}{{localize "OCEAN.travel.sceneFullscreen"}}{{/if}} · {{hostState}}</span></div>
+      <div class="otcp-clock" data-travel-clock>{{clockLabel}}</div>
+    </header>
+
+
+    <nav class="otcp-workspaces" aria-label="{{localize 'OCEAN.travel.panelWorkspaces'}}">
+      <button type="button" class="otcp-workspace {{#if runtime}}is-active{{/if}}" data-travel-workspace="runtime" aria-current="{{#if runtime}}page{{else}}false{{/if}}"><i class="fa-solid fa-play"></i>{{localize "OCEAN.travel.liveControls"}}</button>
+      <button type="button" class="otcp-workspace {{#if editing}}is-active{{/if}}" data-travel-workspace="editing" aria-current="{{#if editing}}page{{else}}false{{/if}}"><i class="fa-solid fa-sliders"></i>{{localize "OCEAN.travel.sceneTuning"}}</button>
+    </nav>
+    {{#if editing}}    <nav class="otcp-tabs" aria-label="{{localize 'OCEAN.travel.sections'}}">
+      {{#each tabs}}
+        <button type="button" class="otcp-tab {{#if active}}is-active{{/if}}" data-travel-tab="{{id}}" aria-current="{{#if active}}page{{else}}false{{/if}}"><i class="fa-solid {{icon}}"></i>{{label}}</button>
+      {{/each}}
+    </nav>
+
+{{/if}}
+    <div class="otcp-scroll" data-travel-scroll>
+      {{#if runtime}}
+        <section class="otcp-group" aria-label="{{localize 'OCEAN.travel.director'}}">
+          <div class="otcp-group__head"><i class="fa-solid fa-video"></i>{{localize "OCEAN.travel.director"}}</div>
+          <div class="otcp-group__body">      <div class="otcp-camera-grid">
+        {{#each cameras}}
+          <button type="button" class="otcp-camera {{#if active}}is-active{{/if}}" data-travel-camera="{{id}}" aria-pressed="{{#if active}}true{{else}}false{{/if}}" data-tooltip="{{hint}}" {{#unless ../canEdit}}disabled{{/unless}}>
+            <i class="fa-solid {{icon}}"></i><span>{{label}}</span>
+          </button>
+        {{/each}}
+      </div>
+</div>
+        </section>
+        <section class="otcp-group" aria-label="{{localize 'OCEAN.travel.preset'}}">
+          <div class="otcp-group__head"><i class="fa-solid fa-wand-magic-sparkles"></i>{{localize "OCEAN.travel.preset"}}</div>
+          <div class="otcp-group__body"><div class="otcp-presets">        <select data-travel-preset aria-label="{{localize 'OCEAN.travel.preset'}}" {{#unless canEdit}}disabled{{/unless}}>
+          {{#each presets}}<option value="{{id}}" {{#if selected}}selected{{/if}}>{{label}}</option>{{/each}}
+        </select>
+        <button type="button" data-travel-preset-apply {{#unless canEdit}}disabled{{/unless}}><i class="fa-solid fa-wand-magic-sparkles"></i> {{localize "OCEAN.travel.applyPreset"}}</button>
+</div></div>
+        </section>
+        <section class="otcp-group" aria-label="{{localize 'OCEAN.travel.atmosphereControls'}}">
+          <div class="otcp-group__head"><i class="fa-solid fa-feather"></i>{{localize "OCEAN.travel.atmosphereControls"}}</div>
+          {{#each runtimeControls}}{{> travelControl}}{{/each}}
+          <div class="otcp-group__body otcp-setting-line">        <label class="otcp-toggle" data-tooltip="{{localize 'OCEAN.travel.ambienceHint'}}">
+          <input type="checkbox" data-travel-ambience {{#if ambienceEnabled}}checked{{/if}} {{#unless canEdit}}disabled{{/unless}}>
+          <i class="fa-solid fa-volume-high" aria-hidden="true"></i>
+          <span>{{localize "OCEAN.travel.ambience"}}</span>
+        </label>
+<p class="otcp-warning">{{localize "OCEAN.travel.ambienceVolumeHint"}}</p></div>
+        </section>
+        <p class="otcp-warning">{{localize "OCEAN.travel.runtimeHint"}}</p>
+      {{else}}
+        {{#if editingParameters}}
+          <p class="otcp-edit-hint">{{localize "OCEAN.travel.editingHint"}}</p>
+          <section class="otcp-group">
+            <div class="otcp-group__head"><i class="fa-solid {{group.icon}}"></i>{{group.label}}</div>
+            {{#each group.normal}}{{> travelControl}}{{/each}}
+            {{#if group.advanced.length}}
+              <details class="otcp-advanced" data-travel-advanced="{{group.id}}" {{#if group.advancedOpen}}open{{/if}}>
+                <summary><i class="fa-solid fa-sliders"></i>{{localize "OCEAN.control.advanced"}}</summary>
+                {{#each group.advanced}}{{> travelControl}}{{/each}}
+              </details>
+            {{/if}}
+          </section>
+        {{/if}}
+        {{#if editingPresets}}
+          <section class="otcp-group">
+            <div class="otcp-group__head"><i class="fa-solid fa-bookmark"></i>{{localize "OCEAN.travel.presetManagement"}}</div>
+            <div class="otcp-group__body">
+              <div class="otcp-presets">        <select data-travel-preset aria-label="{{localize 'OCEAN.travel.preset'}}" {{#unless canEdit}}disabled{{/unless}}>
+          {{#each presets}}<option value="{{id}}" {{#if selected}}selected{{/if}}>{{label}}</option>{{/each}}
+        </select>
+        <button type="button" data-travel-preset-apply {{#unless canEdit}}disabled{{/unless}}><i class="fa-solid fa-wand-magic-sparkles"></i> {{localize "OCEAN.travel.applyPreset"}}</button>
+</div>
+              <div class="otcp-preset-actions">        <button type="button" data-travel-preset-open {{#unless canEdit}}disabled{{/unless}}><i class="fa-solid fa-bookmark"></i> {{localize "OCEAN.travel.savePreset"}}</button>
+        <button type="button" data-travel-restore-defaults {{#unless canEdit}}disabled{{/unless}}><i class="fa-solid fa-rotate-left"></i> {{localize "OCEAN.travel.restoreDefaults"}}</button>
+        {{#if selectedPresetDeletable}}<button type="button" class="is-danger" data-travel-preset-delete-open {{#unless canEdit}}disabled{{/unless}}><i class="fa-solid fa-trash-can"></i> {{localize "OCEAN.travel.deletePreset"}}</button>{{/if}}
+</div>
+                    {{#if presetEditorOpen}}
+        <div class="otcp-preset-editor">
+          <input type="text" maxlength="48" data-travel-preset-name placeholder="{{localize 'OCEAN.travel.presetName'}}" aria-label="{{localize 'OCEAN.travel.presetName'}}" value="{{presetName}}">
+          <button type="button" data-travel-preset-save>{{localize "OCEAN.travel.confirmSavePreset"}}</button>
+          <button type="button" data-travel-preset-cancel>{{localize "OCEAN.travel.cancelPreset"}}</button>
+        </div>
+      {{/if}}
+      {{#if presetDeleteConfirmOpen}}
+        <div class="otcp-preset-editor otcp-preset-confirm">
+          <span>{{localize "OCEAN.travel.deletePresetConfirm"}}：{{selectedPresetName}}</span>
+          <button type="button" class="is-danger" data-travel-preset-delete>{{localize "OCEAN.travel.confirmDeletePreset"}}</button>
+          <button type="button" data-travel-preset-delete-cancel>{{localize "OCEAN.travel.cancelPreset"}}</button>
+        </div>
+      {{/if}}
+
+              <p class="otcp-warning">{{localize "OCEAN.travel.presetManagementHint"}}</p>
+            </div>
+          </section>
+        {{/if}}
+        {{#if editingPlayers}}
+          <section class="otcp-group">
+            <div class="otcp-group__head"><i class="fa-solid fa-users"></i>{{localize "OCEAN.travel.playerDefaults"}}</div>
+            <div class="otcp-group__body">      <div class="otcp-local">
+        <div>
+          <div class="otcp-section-title"><i class="fa-solid fa-users-gear"></i> {{localize "OCEAN.settings.travelQuality.qualitySection"}}</div>
+          <div class="otcp-quality">
+            {{#each qualities}}
+              <button type="button" class="{{#if active}}is-active{{/if}}" data-travel-quality="{{id}}" aria-pressed="{{#if active}}true{{else}}false{{/if}}" {{#unless ../canEdit}}disabled{{/unless}}>{{label}}</button>
+            {{/each}}
+          </div>
+        </div>
+        {{#if canvasBackgroundMode}}
+          <div class="otcp-toggle is-readonly" data-tooltip="{{localize 'OCEAN.travel.canvasPanParallaxHint'}}">
+            <i class="fa-solid fa-arrows-up-down-left-right" aria-hidden="true"></i>
+            <span>{{localize "OCEAN.travel.canvasPanParallax"}}</span>
+          </div>
+        {{else}}
+          <label class="otcp-toggle" data-tooltip="{{localize 'OCEAN.settings.travelMouseParallax.hint'}}">
+            <input type="checkbox" data-travel-parallax {{#if mouseParallax}}checked{{/if}} {{#unless canEdit}}disabled{{/unless}}>
+            <span>{{localize "OCEAN.travel.defaultMouseParallax"}}</span>
+          </label>
+        {{/if}}
+      </div>
+      <div class="otcp-warning"><i class="fa-solid fa-circle-info"></i>{{#if canvasBackgroundMode}}{{localize "OCEAN.travel.playerDefaultsCanvasHint"}}{{else}}{{localize "OCEAN.travel.playerDefaultsFullscreenHint"}}{{/if}}</div>
+      <div class="otcp-warning"><i class="fa-solid fa-circle-info"></i>{{#if canvasBackgroundMode}}{{localize "OCEAN.travel.canvasBackgroundSceneHint"}}{{else}}{{localize "OCEAN.travel.fullscreenSceneHint"}}{{/if}}</div>
+</div>
+          </section>
+        {{/if}}
+      {{/if}}
+    </div>
+  {{/if}}
+</form>

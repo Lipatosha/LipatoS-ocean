@@ -1,0 +1,122 @@
+<section class="otqs">
+  <style>
+    .ocean-travel-quality-settings .window-content { padding: 0; }
+    .otqs {
+      --otqs-bg: #091821;
+      --otqs-panel: rgba(18, 43, 55, 0.78);
+      --otqs-line: rgba(142, 205, 222, 0.2);
+      --otqs-text: #e8f5f7;
+      --otqs-dim: #9eb6be;
+      --otqs-accent: #68d0e5;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      padding: 18px;
+      color: var(--otqs-text);
+      background: radial-gradient(circle at 12% 0%, rgba(42, 124, 146, 0.26), transparent 42%), var(--otqs-bg);
+    }
+    .otqs__intro { margin: 0; color: var(--otqs-dim); font-size: 12px; line-height: 1.55; }
+    .otqs__section { display: flex; flex-direction: column; gap: 12px; padding: 14px; border: 1px solid var(--otqs-line); border-radius: 10px; background: rgba(10, 30, 40, 0.54); }
+    .otqs__section-head { display: flex; align-items: flex-start; gap: 10px; }
+    .otqs__section-head > i { width: 22px; margin-top: 2px; color: var(--otqs-accent); font-size: 16px; text-align: center; }
+    .otqs__section-head h2 { margin: 0; color: var(--otqs-text); font-size: 14px; }
+    .otqs__section-head p { margin: 4px 0 0; color: var(--otqs-dim); font-size: 10.5px; line-height: 1.45; }
+    .otqs__legacy { display: flex; gap: 8px; margin: -3px 0 0; padding: 9px 11px; border: 1px solid rgba(227, 184, 111, 0.3); border-radius: 7px; color: #d8c7a8; background: rgba(160, 112, 42, 0.1); font-size: 11px; line-height: 1.45; }
+    .otqs__legacy i { margin-top: 2px; color: #e7bd76; }
+    .otqs__inherit { width: 100%; display: flex; align-items: center; gap: 10px; padding: 11px 13px; border: 1px solid var(--otqs-line); border-radius: 9px; color: var(--otqs-text); background: var(--otqs-panel); text-align: left; cursor: pointer; }
+    .otqs__inherit.is-selected { border-color: rgba(104, 208, 229, 0.84); background: rgba(49, 128, 149, 0.28); }
+    .otqs__inherit i { color: var(--otqs-accent); }
+    .otqs__inherit span { color: var(--otqs-dim); font-size: 10.5px; }
+    .otqs__tiers { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+    .otqs__tier { min-width: 0; min-height: 210px; display: flex; flex-direction: column; padding: 14px; border: 1px solid var(--otqs-line); border-radius: 10px; color: var(--otqs-text); background: var(--otqs-panel); text-align: left; cursor: pointer; transition: border-color 120ms ease, background 120ms ease, transform 120ms ease; }
+    .otqs__tier:hover { border-color: rgba(104, 208, 229, 0.52); background: rgba(23, 57, 71, 0.88); transform: translateY(-1px); }
+    .otqs__tier.is-selected { border-color: rgba(104, 208, 229, 0.84); background: linear-gradient(180deg, rgba(49, 128, 149, 0.34), rgba(14, 42, 54, 0.88)); box-shadow: inset 0 0 0 1px rgba(104, 208, 229, 0.13); }
+    .otqs__tier-head { display: flex; align-items: center; gap: 9px; }
+    .otqs__tier-head i { width: 22px; color: var(--otqs-accent); font-size: 18px; text-align: center; }
+    .otqs__tier-head strong { flex: 1; font-size: 15px; }
+    .otqs__current { padding: 3px 6px; border-radius: 999px; color: #071820; background: var(--otqs-accent); font-size: 9px; font-weight: 800; }
+    .otqs__summary { margin: 11px 0 0; color: #d8e9ec; font-size: 11.5px; line-height: 1.45; }
+    .otqs__recommendation { margin-top: auto; padding-top: 13px; border-top: 1px solid rgba(142, 205, 222, 0.13); }
+    .otqs__recommendation b { display: block; margin-bottom: 5px; color: var(--otqs-accent); font-size: 10px; letter-spacing: 0.05em; }
+    .otqs__recommendation span { display: block; color: var(--otqs-dim); font-size: 10.5px; line-height: 1.5; }
+    .otqs__toggle { display: flex; align-items: center; gap: 14px; min-height: 58px; padding: 11px 12px; border: 1px solid rgba(142, 205, 222, 0.16); border-radius: 8px; background: var(--otqs-panel); cursor: pointer; }
+    .otqs__toggle-copy { min-width: 0; flex: 1; }
+    .otqs__toggle-copy strong { display: block; color: var(--otqs-text); font-size: 12.5px; }
+    .otqs__toggle-copy span { display: block; margin-top: 4px; color: var(--otqs-dim); font-size: 10.5px; line-height: 1.45; }
+    .otqs__toggle input { flex: 0 0 auto; width: 18px; height: 18px; margin: 0; accent-color: var(--otqs-accent); }
+    .otqs__toggle select { flex: 0 0 190px; height: 32px; padding: 0 8px; border: 1px solid var(--otqs-line); border-radius: 7px; color: var(--otqs-text); background: #0c222d; }
+    .otqs__actions { display: flex; justify-content: flex-end; gap: 8px; padding-top: 2px; }
+    .otqs__actions button { min-width: 96px; height: 32px; border: 1px solid var(--otqs-line); border-radius: 7px; color: var(--otqs-text); background: rgba(20, 45, 57, 0.78); cursor: pointer; }
+    .otqs__actions button[data-action="save"] { color: #06171e; border-color: rgba(104, 208, 229, 0.8); background: var(--otqs-accent); font-weight: 800; }
+    .otqs__actions button:disabled { opacity: 0.45; cursor: not-allowed; }
+    @media (max-width: 680px) {
+      .otqs__tiers { grid-template-columns: 1fr; }
+      .otqs__tier { min-height: 0; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .otqs__tier { transition: none; }
+    }
+  </style>
+
+  <p class="otqs__intro">{{localize "OCEAN.settings.travelQuality.localNote"}}</p>
+  <section class="otqs__section">
+    <header class="otqs__section-head">
+      <i class="fa-solid fa-display" aria-hidden="true"></i>
+      <div>
+        <h2>{{localize "OCEAN.settings.travelQuality.qualitySection"}}</h2>
+        <p>{{localize "OCEAN.settings.travelQuality.hint"}}</p>
+      </div>
+    </header>
+
+    {{#if hasLegacyQuality}}
+      <p class="otqs__legacy"><i class="fa-solid fa-circle-info"></i><span>{{localize "OCEAN.settings.travelQuality.legacyNote"}}</span></p>
+    {{/if}}
+
+    <button type="button" class="otqs__inherit {{#if inheritSelected}}is-selected{{/if}}" data-quality-tier="inherit" role="radio" aria-checked="{{#if inheritSelected}}true{{else}}false{{/if}}">
+      <i class="fa-solid fa-users-gear"></i>
+      <strong>{{localize "OCEAN.settings.travelQuality.followDefault"}}</strong>
+      <span>{{localize "OCEAN.settings.travelQuality.currentDefault"}}：{{defaultQualityLabel}}</span>
+    </button>
+
+    <div class="otqs__tiers" role="radiogroup" aria-label="{{localize 'OCEAN.settings.travelQuality.label'}}">
+      {{#each tiers}}
+        <button type="button" class="otqs__tier {{#if selected}}is-selected{{/if}}" data-quality-tier="{{id}}" role="radio" aria-checked="{{#if selected}}true{{else}}false{{/if}}">
+          <span class="otqs__tier-head">
+            <i class="fa-solid {{icon}}" aria-hidden="true"></i>
+            <strong>{{label}}</strong>
+            {{#if selected}}<span class="otqs__current">{{localize "OCEAN.settings.travelQuality.current"}}</span>{{/if}}
+          </span>
+          <span class="otqs__summary">{{summary}}</span>
+          <span class="otqs__recommendation">
+            <b>{{localize "OCEAN.settings.travelQuality.recommended"}}</b>
+            <span>{{recommendation}}</span>
+          </span>
+        </button>
+      {{/each}}
+    </div>
+  </section>
+
+  <section class="otqs__section">
+    <header class="otqs__section-head">
+      <i class="fa-solid fa-camera" aria-hidden="true"></i>
+      <div>
+        <h2>{{localize "OCEAN.settings.travelQuality.cameraSection"}}</h2>
+      </div>
+    </header>
+
+    <label class="otqs__toggle">
+      <span class="otqs__toggle-copy">
+        <strong>{{localize "OCEAN.settings.travelMouseParallax.label"}}</strong>
+        <span>{{localize "OCEAN.settings.travelMouseParallax.hint"}}</span>
+      </span>
+      <select data-setting="mouse-parallax">
+        {{#each mouseParallaxOptions}}<option value="{{id}}" {{#if selected}}selected{{/if}}>{{label}}</option>{{/each}}
+      </select>
+    </label>
+  </section>
+
+  <footer class="otqs__actions">
+    <button type="button" data-action="cancel">{{localize "OCEAN.settings.travelQuality.cancel"}}</button>
+    <button type="button" data-action="save">{{localize "OCEAN.settings.travelQuality.save"}}</button>
+  </footer>
+</section>

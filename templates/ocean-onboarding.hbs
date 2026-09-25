@@ -1,0 +1,64 @@
+<section class="ocean-onboarding__body">
+  <style>
+    .ocean-onboarding .window-content { padding: 0; }
+    .ocean-onboarding__body {
+      --oob-bg: #081821;
+      --oob-panel: rgba(17, 43, 55, 0.78);
+      --oob-line: rgba(136, 205, 222, 0.2);
+      --oob-text: #e8f5f7;
+      --oob-dim: #9fb8c0;
+      --oob-accent: #6fd1e5;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      padding: 20px;
+      color: var(--oob-text);
+      background: radial-gradient(circle at 14% 0%, rgba(42, 128, 150, 0.28), transparent 40%), var(--oob-bg);
+    }
+    .ocean-onboarding__intro { margin: 0; color: var(--oob-dim); font-size: 12px; line-height: 1.55; }
+    .ocean-onboarding__sections { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+    .ocean-onboarding__section { min-width: 0; padding: 14px; border: 1px solid var(--oob-line); border-radius: 10px; background: var(--oob-panel); }
+    .ocean-onboarding__section h3 { display: flex; align-items: center; gap: 8px; margin: 0 0 10px; color: var(--oob-text); font-size: 14px; }
+    .ocean-onboarding__section h3 i { width: 18px; color: var(--oob-accent); text-align: center; }
+    .ocean-onboarding__steps { margin: 0; padding-left: 20px; color: #d7e8ec; font-size: 11px; line-height: 1.55; }
+    .ocean-onboarding__steps li + li { margin-top: 7px; }
+    .ocean-onboarding__note { margin: 10px 0 0; padding-top: 9px; border-top: 1px solid rgba(136, 205, 222, 0.13); color: var(--oob-dim); font-size: 10px; line-height: 1.5; }
+    .ocean-onboarding__actions { display: flex; justify-content: flex-end; gap: 8px; }
+    .ocean-onboarding__actions button { min-width: 132px; height: 34px; border: 1px solid var(--oob-line); border-radius: 7px; color: var(--oob-text); background: rgba(20, 46, 58, 0.82); cursor: pointer; }
+    .ocean-onboarding__actions button[data-action="close"] { color: #06171e; border-color: rgba(111, 209, 229, 0.82); background: var(--oob-accent); font-weight: 800; }
+    @media (max-width: 680px) {
+      .ocean-onboarding__sections { grid-template-columns: 1fr; }
+      .ocean-onboarding__actions { flex-direction: column; }
+      .ocean-onboarding__actions button { width: 100%; }
+    }
+  </style>
+
+  <p class="ocean-onboarding__intro">
+    {{localize "OCEAN.onboarding.body"}}
+  </p>
+
+  <div class="ocean-onboarding__sections">
+    {{#each sections as |section|}}
+      <article class="ocean-onboarding__section">
+        <h3><i class="fa-solid {{section.icon}}" aria-hidden="true"></i>{{localize section.title}}</h3>
+        <ol class="ocean-onboarding__steps">
+          {{#each section.steps as |step|}}
+            <li>{{localize step}}</li>
+          {{/each}}
+        </ol>
+        {{#if section.note}}<p class="ocean-onboarding__note">{{localize section.note}}</p>{{/if}}
+      </article>
+    {{/each}}
+  </div>
+
+  <footer class="ocean-onboarding__actions">
+    <button type="button" data-action="dismiss">
+      <i class="fa-solid fa-eye-slash" inert></i>
+      {{localize "OCEAN.onboarding.dontShow"}}
+    </button>
+    <button type="button" data-action="close">
+      <i class="fa-solid fa-check" inert></i>
+      {{localize "OCEAN.onboarding.close"}}
+    </button>
+  </footer>
+</section>

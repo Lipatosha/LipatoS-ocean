@@ -1,0 +1,134 @@
+<form class="ocean-scene-light-panel__body">
+  <style>
+    .ocean-scene-light-panel__body {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      padding: 10px;
+    }
+
+    .ocean-scene-light-panel__row {
+      display: grid;
+      grid-template-columns: 92px 1fr;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .ocean-scene-light-panel__row label {
+      color: var(--color-text-light-6);
+      font-size: 12px;
+    }
+
+    .ocean-scene-light-panel__range {
+      display: grid;
+      grid-template-columns: 1fr 42px;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .ocean-scene-light-panel__range input {
+      width: 100%;
+    }
+
+    .ocean-scene-light-panel__range span {
+      color: var(--color-text-light-6);
+      font-variant-numeric: tabular-nums;
+      text-align: right;
+    }
+
+    .ocean-scene-light-panel__swatch {
+      width: 100%;
+      min-height: 28px;
+      padding: 0;
+    }
+
+    .ocean-scene-light-panel__note {
+      color: var(--color-text-light-6);
+      font-size: 12px;
+      line-height: 1.35;
+      margin: 0;
+    }
+
+    .ocean-scene-light-panel__footer {
+      display: flex;
+      justify-content: flex-end;
+      padding-top: 4px;
+    }
+  </style>
+
+  <div class="ocean-scene-light-panel__row">
+    <label>{{localize "OCEAN.lightEditor.preset"}}</label>
+    <select data-light-preset>
+      {{#each presets}}
+        <option value="{{key}}" {{#if selected}}selected{{/if}}>{{localize label}}</option>
+      {{/each}}
+    </select>
+  </div>
+
+  <div class="ocean-scene-light-panel__row">
+    <label>{{localize "OCEAN.lightEditor.color"}}</label>
+    <input class="ocean-scene-light-panel__swatch" type="color" data-light-color value="{{light.color}}">
+  </div>
+
+  <div class="ocean-scene-light-panel__row">
+    <label>{{localize "OCEAN.lightEditor.height"}}</label>
+    <div class="ocean-scene-light-panel__range">
+      <input type="range" data-light-range="height" min="0.05" max="0.95" step="0.01" value="{{light.height}}">
+      <span data-light-value="height">{{light.heightLabel}}</span>
+    </div>
+  </div>
+
+  <div class="ocean-scene-light-panel__row">
+    <label>{{localize "OCEAN.lightEditor.shadowHeight"}}</label>
+    <div class="ocean-scene-light-panel__range">
+      <input type="range" data-light-range="shadowHeight" min="0.05" max="0.95" step="0.01" value="{{light.shadowHeight}}">
+      <span data-light-value="shadowHeight">{{light.shadowHeightLabel}}</span>
+    </div>
+  </div>
+
+  <div class="ocean-scene-light-panel__row">
+    <label>{{localize "OCEAN.lightEditor.radius"}}</label>
+    <div class="ocean-scene-light-panel__range">
+      <input type="range" data-light-range="radius" min="0.05" max="1.5" step="0.01" value="{{light.radius}}">
+      <span data-light-value="radius">{{light.radiusLabel}}</span>
+    </div>
+  </div>
+
+  <div class="ocean-scene-light-panel__row">
+    <label>{{localize "OCEAN.lightEditor.intensity"}}</label>
+    <div class="ocean-scene-light-panel__range">
+      <input type="range" data-light-range="intensity" min="0" max="2.5" step="0.01" value="{{light.intensity}}">
+      <span data-light-value="intensity">{{light.intensityLabel}}</span>
+    </div>
+  </div>
+
+  <div class="ocean-scene-light-panel__row">
+    <label>{{localize "OCEAN.lightEditor.glitter"}}</label>
+    <div class="ocean-scene-light-panel__range">
+      <input type="range" data-light-range="glitterSharpness" min="8" max="4000" step="1" value="{{light.glitterSharpness}}">
+      <span data-light-value="glitterSharpness">{{light.glitterSharpnessLabel}}</span>
+    </div>
+  </div>
+
+  <div class="ocean-scene-light-panel__row">
+    <label>{{localize "OCEAN.lightEditor.glitterFlicker"}}</label>
+    <div class="ocean-scene-light-panel__range">
+      <input type="range" data-light-range="glitterFlicker" min="0" max="4" step="0.05" value="{{light.glitterFlicker}}">
+      <span data-light-value="glitterFlicker">{{light.glitterFlickerLabel}}</span>
+    </div>
+  </div>
+
+  <div class="ocean-scene-light-panel__row">
+    <label>{{localize "OCEAN.lightEditor.focusToLight"}}</label>
+    <input type="checkbox" data-light-focus {{#if light.focusToLight}}checked{{/if}}>
+  </div>
+
+
+  <p class="ocean-scene-light-panel__note">
+    {{localize "OCEAN.lightEditor.dragHint"}}
+  </p>
+
+  <footer class="ocean-scene-light-panel__footer">
+    <button type="button" data-action="close">{{localize "OCEAN.lightEditor.done"}}</button>
+  </footer>
+</form>

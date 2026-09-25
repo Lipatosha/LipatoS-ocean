@@ -1,0 +1,292 @@
+<form class="ocp">
+  <style>
+    /* ── Ocean 控制台 · 液态玻璃 / 左右布局 v4 ─────────────────────
+       顶部固定双预设(水体风格/光感) + 左操作台 + 右类别 tab。配色收在 .ocean-control-panel 作用域。 */
+    .ocean-control-panel {
+      --oc-accent: #5ec8e0;
+      --oc-accent-deep: #2f88a0;
+      --oc-accent-soft: rgba(94, 200, 224, 0.16);
+      --oc-accent-glow: rgba(94, 200, 224, 0.5);
+      --oc-gold: #ffcf85;
+      --oc-text: #e0eef3;
+      --oc-text-dim: #a7c0cb;
+      --oc-text-mute: #7c97a2;
+      --oc-glass: rgba(255, 255, 255, 0.07);
+      --oc-glass-line: rgba(255, 255, 255, 0.16);
+      --oc-radius: 14px;
+      --oc-radius-sm: 9px;
+    }
+
+    .ocean-control-panel.application {
+      background: linear-gradient(165deg, rgba(18, 44, 56, 0.62), rgba(7, 20, 27, 0.66));
+      backdrop-filter: blur(18px) saturate(150%);
+      -webkit-backdrop-filter: blur(18px) saturate(150%);
+      border: 1px solid var(--oc-glass-line);
+      border-radius: 18px;
+      box-shadow: 0 20px 64px rgba(0, 0, 0, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.2), inset 0 -28px 60px rgba(5, 22, 30, 0.4);
+    }
+    .ocean-control-panel .window-header { background: rgba(255, 255, 255, 0.04); border-bottom: 1px solid var(--oc-glass-line); }
+    .ocean-control-panel .window-content { background: transparent; padding: 0; height: 100%; overflow: hidden; display: flex; flex-direction: column; color: var(--oc-text); }
+
+    .ocp { display: flex; flex-direction: column; flex: 1; min-height: 0; }
+
+    .ocp-head { display: flex; align-items: center; gap: 10px; padding: 11px 15px; flex: none; background: linear-gradient(180deg, rgba(10, 24, 31, 0.78), rgba(10, 24, 31, 0.5)); border-bottom: 1px solid var(--oc-glass-line); }
+    .ocp-head__icon { color: var(--oc-accent); font-size: 16px; }
+    .ocp-head__title { font-size: 14px; font-weight: 700; letter-spacing: 0.3px; }
+    .ocp-tools { margin-left: auto; display: flex; gap: 7px; }
+    .ocp-tb { width: 32px; height: 32px; display: grid; place-items: center; padding: 0; border: 1px solid var(--oc-glass-line); border-radius: 10px; background: var(--oc-glass); color: var(--oc-text-dim); cursor: pointer; font-size: 13px; transition: color 0.16s, background 0.16s, box-shadow 0.16s, border-color 0.16s; }
+    .ocp-tb:hover { color: var(--oc-text); background: rgba(255, 255, 255, 0.12); }
+    .ocp-tb.is-on { color: #06222b; background: linear-gradient(180deg, #8fe6f5, var(--oc-accent)); border-color: transparent; box-shadow: 0 2px 12px var(--oc-accent-glow); }
+
+    /* 搜索框：head 中段，玻璃条。input 要压掉 Foundry 全局的底色/描边 */
+    .ocp-search { flex: 1; max-width: 300px; margin-left: auto; display: flex; align-items: center; gap: 7px; height: 32px; padding: 0 10px; border: 1px solid var(--oc-glass-line); border-radius: 10px; background: rgba(4, 14, 19, 0.5); }
+    .ocp-search:focus-within { border-color: var(--oc-accent); }
+    .ocp-search > i:first-child { color: var(--oc-text-mute); font-size: 12px; }
+    .ocp-search input { flex: 1; min-width: 0; height: 100%; background: transparent; border: none; color: var(--oc-text); font-size: 12.5px; }
+    .ocp-search input:focus { outline: none; box-shadow: none; }
+    .ocp-search__clear { cursor: pointer; color: var(--oc-text-mute); font-size: 12px; }
+    .ocp-search__clear:hover { color: var(--oc-text); }
+
+    /* 顶部双预设：水体风格(金) + 光感(青)，比其它都醒目 */
+    .ocp-presets { display: grid; grid-template-columns: 1fr 1fr; gap: 11px; padding: 13px 15px; flex: none; border-bottom: 1px solid var(--oc-glass-line); }
+    .ocp-pcard { border-radius: 12px; padding: 9px 12px; }
+    .ocp-pcard__lb { display: flex; align-items: center; gap: 6px; font-size: 11.5px; font-weight: 700; letter-spacing: 0.4px; margin-bottom: 7px; }
+    .ocp-pcard__row { display: flex; gap: 8px; align-items: center; }
+    .ocp-pcard select { flex: 1; min-width: 0; height: 33px; border-radius: 8px; background: rgba(4, 14, 19, 0.55); color: var(--oc-text); border: 1px solid var(--oc-glass-line); padding: 0 9px; font-size: 13.5px; }
+    .ocp-pcard select:focus { outline: none; border-color: var(--oc-accent); }
+    .ocp-pcard--water { border: 1px solid rgba(255, 207, 133, 0.5); background: rgba(255, 207, 133, 0.08); }
+    .ocp-pcard--water .ocp-pcard__lb { color: var(--oc-gold); }
+    .ocp-pcard--light { border: 1px solid rgba(94, 200, 224, 0.5); background: rgba(94, 200, 224, 0.08); }
+    .ocp-pcard--light .ocp-pcard__lb { color: var(--oc-accent); }
+    .ocp-pbtn { width: 33px; height: 33px; flex: none; display: grid; place-items: center; border-radius: 8px; border: 1px solid rgba(255, 207, 133, 0.5); background: rgba(255, 207, 133, 0.14); color: var(--oc-gold); cursor: pointer; }
+    .ocp-pbtn:hover { background: rgba(255, 207, 133, 0.26); }
+
+    .ocp-newform { display: flex; gap: 8px; align-items: center; padding: 10px 15px; flex: none; border-bottom: 1px solid var(--oc-glass-line); background: rgba(255, 207, 133, 0.05); }
+    .ocp-newform input { flex: 1; min-width: 0; height: 31px; border-radius: 7px; background: rgba(4, 14, 19, 0.5); border: 1px solid var(--oc-glass-line); color: var(--oc-text); padding: 0 10px; font-size: 13px; }
+    .ocp-newform input:focus { outline: none; border-color: var(--oc-gold); }
+    .ocp-nbtn { height: 30px; padding: 0 13px; border-radius: 7px; font-size: 12.5px; font-weight: 600; cursor: pointer; border: 1px solid rgba(255, 207, 133, 0.5); background: rgba(255, 207, 133, 0.16); color: var(--oc-gold); }
+    .ocp-nbtn.ghost { border-color: var(--oc-glass-line); background: var(--oc-glass); color: var(--oc-text-dim); }
+
+    .ocp-custlist { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; padding: 9px 15px; flex: none; border-bottom: 1px solid var(--oc-glass-line); font-size: 11.5px; color: var(--oc-text-mute); }
+    .ocp-tag { display: inline-flex; align-items: center; gap: 6px; padding: 3px 5px 3px 10px; border-radius: 999px; border: 1px solid rgba(255, 207, 133, 0.32); background: rgba(255, 207, 133, 0.08); color: var(--oc-gold); font-size: 11.5px; }
+    .ocp-tag i { cursor: pointer; color: var(--oc-text-mute); }
+    .ocp-tag i:hover { color: #ff9a8a; }
+
+    /* 左右主体 */
+    .ocp-main { display: flex; flex: 1; min-height: 0; }
+    .ocp-stage { flex: 1; min-width: 0; overflow-y: auto; overscroll-behavior: contain; padding: 13px 16px 18px; }
+    .ocp-stage::-webkit-scrollbar { width: 10px; }
+    .ocp-stage::-webkit-scrollbar-thumb { background: rgba(140, 200, 220, 0.22); border-radius: 999px; border: 2px solid transparent; background-clip: padding-box; }
+    .ocp-tabs { width: 158px; flex: none; overflow-y: auto; padding: 11px 9px; border-left: 1px solid var(--oc-glass-line); background: rgba(4, 14, 19, 0.25); display: flex; flex-direction: column; gap: 5px; }
+    .ocp-tab { display: flex; align-items: center; gap: 9px; padding: 10px 11px; border-radius: 10px; cursor: pointer; border: 1px solid transparent; color: var(--oc-text-dim); font-size: 13px; }
+    .ocp-tab:hover { background: var(--oc-glass); color: var(--oc-text); }
+    .ocp-tab.is-active { background: rgba(94, 200, 224, 0.16); border-color: rgba(94, 200, 224, 0.4); color: var(--oc-text); }
+    .ocp-tab i:first-child { width: 18px; text-align: center; color: var(--oc-accent); }
+    .ocp-tab.is-idle i:first-child { color: var(--oc-gold); }
+    .ocp-tab__ct { margin-left: auto; font-size: 11px; color: var(--oc-text-mute); font-variant-numeric: tabular-nums; }
+    .ocp-tab.is-active .ocp-tab__ct { color: var(--oc-accent); }
+
+    .ocp-shead { display: flex; align-items: center; gap: 9px; font-size: 14px; font-weight: 600; padding: 2px 4px 11px; }
+    .ocp-shead i { color: var(--oc-accent); }
+    .ocp-favgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 2px 18px; }
+    .ocp-favgrid .ocp-row { border-bottom: 0; }
+
+    /* 控件行 */
+    .ocp-row { display: grid; grid-template-columns: minmax(92px, 0.8fr) minmax(0, 1.2fr); gap: 11px; align-items: center; padding: 8px 6px; border-bottom: 1px solid rgba(140, 200, 220, 0.09); border-radius: 7px; transition: background 0.14s; }
+    .ocp-row:hover { background: rgba(94, 200, 224, 0.07); }
+    .ocp-row.is-sys { opacity: 0.62; }
+    .ocp-row__label { font-size: 12.5px; font-weight: 600; color: var(--oc-text-dim); min-width: 0; overflow-wrap: anywhere; line-height: 1.3; }
+    .ocp-row__ctl { display: flex; align-items: center; gap: 9px; min-width: 0; }
+    .ocp-row__ctl input[type="range"] { -webkit-appearance: none; appearance: none; flex: 1; min-width: 0; height: 18px; background: transparent; cursor: pointer; }
+    .ocp-row__ctl input[type="range"]::-webkit-slider-runnable-track { height: 5px; border-radius: 999px; background: linear-gradient(90deg, var(--oc-accent-deep) 0%, rgba(47, 136, 160, 0.35) 24%, rgba(140, 180, 195, 0.16) 65%); }
+    .ocp-row__ctl input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 14px; height: 14px; margin-top: -4.5px; border-radius: 50%; background: radial-gradient(circle at 35% 30%, #eafaff, var(--oc-accent) 58%, var(--oc-accent-deep)); border: 1px solid rgba(255, 255, 255, 0.7); box-shadow: 0 0 0 3px var(--oc-accent-soft), 0 1px 3px rgba(0, 0, 0, 0.55); transition: transform 0.14s, box-shadow 0.14s; }
+    .ocp-row__ctl input[type="range"]:hover::-webkit-slider-thumb { transform: scale(1.18); box-shadow: 0 0 0 4px var(--oc-accent-soft), 0 0 11px var(--oc-accent-glow); }
+    .ocp-row__ctl input[type="range"]:focus { outline: none; }
+    .ocp-row__ctl input[type="number"] { flex: 1; min-width: 0; height: 28px; padding: 0 8px; color: var(--oc-text); background: rgba(4, 14, 19, 0.5); border: 1px solid var(--oc-glass-line); border-radius: var(--oc-radius-sm); font-size: 12px; }
+    .ocp-row__ctl input[type="number"]:focus { outline: none; border-color: var(--oc-accent); }
+    .ocp-row__ctl input[type="checkbox"] { width: 16px; height: 16px; accent-color: var(--oc-accent); cursor: pointer; }
+    .ocp-val { font-variant-numeric: tabular-nums; font-size: 11px; min-width: 40px; text-align: center; padding: 3px 0; border-radius: 5px; background: rgba(4, 14, 19, 0.55); border: 1px solid var(--oc-glass-line); color: var(--oc-text); }
+    .ocp-swatch { width: 44px; height: 27px; flex: none; padding: 2px; border: 1px solid var(--oc-glass-line); border-radius: var(--oc-radius-sm); background: rgba(4, 14, 19, 0.5); cursor: pointer; }
+
+    /* 风向 8 方位按钮排 */
+    .ocp-dir8 { display: flex; gap: 4px; flex: 1; min-width: 0; }
+    .ocp-dir8__btn { width: 26px; height: 26px; flex: none; display: grid; place-items: center; padding: 0; border: 1px solid var(--oc-glass-line); border-radius: 7px; background: var(--oc-glass); color: var(--oc-text-dim); cursor: pointer; font-size: 11px; transition: color 0.14s, background 0.14s; }
+    .ocp-dir8__btn:hover { color: var(--oc-text); background: rgba(255, 255, 255, 0.12); }
+    .ocp-dir8__btn.is-on { color: #06222b; background: linear-gradient(180deg, #8fe6f5, var(--oc-accent)); border-color: transparent; box-shadow: 0 1px 8px var(--oc-accent-glow); }
+
+    .ocp-op { height: 27px; flex: none; display: grid; place-items: center; padding: 0; border: 1px solid var(--oc-glass-line); border-radius: var(--oc-radius-sm); background: var(--oc-glass); color: var(--oc-text-mute); cursor: pointer; font-size: 12px; transition: color 0.14s, background 0.14s, border-color 0.14s; }
+    .ocp-op:hover { color: var(--oc-text); }
+    .ocp-op--star { width: 27px; }
+    .ocp-op--star.is-on { color: var(--oc-gold); border-color: rgba(255, 207, 133, 0.4); background: rgba(255, 207, 133, 0.12); }
+    .ocp-op--lvl { width: auto; padding: 0 9px; font-size: 10.5px; font-weight: 700; letter-spacing: 0.3px; }
+    .ocp-op--lvl.is-adv { color: var(--oc-accent); border-color: rgba(94, 200, 224, 0.45); background: var(--oc-accent-soft); }
+
+    /* 高级子区：染冷色 + 左竖条，和常规拉开 */
+    .ocp-adv { margin-top: 12px; border-top: 1px solid var(--oc-glass-line); }
+    .ocp-adv__sum { display: flex; align-items: center; gap: 8px; padding: 11px 4px 6px; cursor: pointer; list-style: none; user-select: none; font-size: 11px; font-weight: 700; letter-spacing: 0.6px; color: var(--oc-text-dim); }
+    .ocp-adv__sum::-webkit-details-marker { display: none; }
+    .ocp-adv__sum:hover { color: var(--oc-text); }
+    .ocp-adv__sum > i:first-child { color: var(--oc-accent); }
+    .ocp-adv__chev { margin-left: auto; font-size: 11px; transition: transform 0.22s; }
+    .ocp-adv[open] > .ocp-adv__sum .ocp-adv__chev { transform: rotate(180deg); }
+    .ocp-adv__body { padding: 3px 0 4px 13px; margin-top: 3px; border-left: 2px solid var(--oc-accent-deep); background: linear-gradient(90deg, rgba(94, 200, 224, 0.08), transparent 72%); border-radius: 0 8px 8px 0; }
+
+    .ocp-sub { display: flex; align-items: center; gap: 8px; margin: 13px 0 4px; padding-top: 9px; border-top: 1px solid var(--oc-glass-line); font-size: 11px; font-weight: 700; letter-spacing: 0.6px; text-transform: uppercase; color: var(--oc-text); }
+    .ocp-sub::before { content: ""; width: 3px; height: 12px; border-radius: 2px; background: var(--oc-accent); }
+    .ocp-empty { text-align: center; color: var(--oc-text-mute); font-size: 12px; padding: 22px 10px; }
+
+    .ocp-effects, .ocp-steps { display: flex; flex-direction: column; gap: 7px; margin-top: 4px; }
+    .ocp-effect, .ocp-step { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 10px; align-items: center; padding: 8px 9px; border: 1px solid var(--oc-glass-line); border-radius: var(--oc-radius-sm); background: rgba(4, 14, 19, 0.3); }
+    .ocp-effect__main, .ocp-step__main { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+    .ocp-effect__main label { display: flex; align-items: center; gap: 7px; font-size: 12px; font-weight: 600; color: var(--oc-text); }
+    .ocp-effect__main span, .ocp-step__main span { color: var(--oc-text-mute); font-size: 11px; line-height: 1.3; }
+    .ocp-step__main strong { color: var(--oc-text); font-size: 12px; }
+    .ocp-filename { font-variant-numeric: tabular-nums; font-size: 11px; color: var(--oc-text-dim); }
+
+    .ocp-toolbar { display: flex; justify-content: flex-end; gap: 8px; flex-wrap: wrap; margin-top: 12px; padding-top: 10px; border-top: 1px solid var(--oc-glass-line); }
+    .ocp-stage button:not(.ocp-op):not(.ocp-adv__sum):not(.ocp-dir8__btn) { height: 28px; padding: 0 12px; font-size: 12px; font-weight: 600; color: var(--oc-accent); background: rgba(94, 200, 224, 0.1); border: 1px solid rgba(94, 200, 224, 0.34); border-radius: var(--oc-radius-sm); cursor: pointer; transition: color 0.15s, background 0.15s, border-color 0.15s; }
+    .ocp-stage button:not(.ocp-op):not(.ocp-adv__sum):not(.ocp-dir8__btn):hover { color: #06222b; background: linear-gradient(180deg, #7adcef, var(--oc-accent)); border-color: transparent; }
+    .ocp-step button.active { color: #06222b; background: linear-gradient(180deg, #7adcef, var(--oc-accent)); border-color: transparent; }
+
+    @media (prefers-reduced-motion: reduce) { .ocean-control-panel * { transition: none !important; } }
+  </style>
+
+  {{!-- 一行可调项；编辑模式下可整理项行尾露出「常规/高级」切换 + ★ 收藏 --}}
+  {{#*inline "ocpRow"}}
+    <div class="ocp-row{{#if sys}} is-sys{{/if}}">
+      <div class="ocp-row__label"{{#if hint}} data-tooltip="{{hint}}"{{/if}}>{{label}}</div>
+      <div class="ocp-row__ctl">
+        {{#if isRange}}<input type="range" {{{bindAttr}}} min="{{min}}" max="{{max}}" step="{{step}}" value="{{value}}"><span class="ocp-val" {{{valueAttr}}}>{{valueLabel}}</span>{{/if}}
+        {{#if isDir8}}<div class="ocp-dir8">{{#each dirs}}<button type="button" class="ocp-dir8__btn{{#if active}} is-on{{/if}}" data-dir8="{{deg}}" data-tooltip="{{title}}"><i class="fa-solid fa-arrow-up" style="transform:rotate({{rot}}deg)"></i></button>{{/each}}</div>{{/if}}
+        {{#if isColor}}<input class="ocp-swatch" type="color" {{{bindAttr}}} value="{{hex}}">{{/if}}
+        {{#if isNumber}}<input type="number" data-water-field="elevation" step="1" value="{{value}}"><span class="ocp-val" data-water-value="elevation">{{valueLabel}}</span>{{/if}}
+        {{#if isCheck}}<input type="checkbox" {{{bindAttr}}} {{#if checked}}checked{{/if}}>{{/if}}
+        {{#if isButton}}<button type="button" data-action="toggle-light-editor">{{label}}</button>{{/if}}
+        {{#if @root.edit}}
+          {{#if canLevel}}<button type="button" class="ocp-op ocp-op--lvl{{#if levelAdv}} is-adv{{/if}}" data-level-toggle="{{uid}}" title="{{localize "OCEAN.control.level.toggle"}}">{{levelLabel}}</button>{{/if}}
+          {{#if canFav}}<button type="button" class="ocp-op ocp-op--star{{#if favOn}} is-on{{/if}}" data-fav-toggle="{{uid}}" title="{{localize "OCEAN.control.fav.toggle"}}"><i class="fa-solid fa-star"></i></button>{{/if}}
+        {{/if}}
+      </div>
+    </div>
+  {{/inline}}
+
+  <div class="ocp-head">
+    <i class="fa-solid fa-water ocp-head__icon"></i>
+    <span class="ocp-head__title">{{localize "OCEAN.control.title"}}</span>
+    <div class="ocp-search">
+      <i class="fa-solid fa-magnifying-glass"></i>
+      <input type="text" data-search placeholder="{{localize "OCEAN.control.search.placeholder"}}" value="{{search}}">
+      {{#if search}}<i class="fa-solid fa-xmark ocp-search__clear" data-search-clear title="{{localize "OCEAN.control.search.clear"}}"></i>{{/if}}
+    </div>
+    <div class="ocp-tools">
+      <button type="button" class="ocp-tb{{#if edit}} is-on{{/if}}" data-action="edit" title="{{localize "OCEAN.control.edit.toggle"}}"><i class="fa-solid fa-pen"></i></button>
+      <button type="button" class="ocp-tb" data-action="export" title="{{localize "OCEAN.control.export.title"}}"><i class="fa-solid fa-download"></i></button>
+    </div>
+  </div>
+
+  {{!-- 顶部双预设：水体风格(金) + 光感(青) --}}
+  <div class="ocp-presets">
+    <div class="ocp-pcard ocp-pcard--water">
+      <div class="ocp-pcard__lb"><i class="fa-solid fa-droplet"></i> {{localize "OCEAN.control.preset.water"}}</div>
+      <div class="ocp-pcard__row">
+        <select data-water-preset>{{#each presets.water}}<option value="{{value}}" {{#if selected}}selected{{/if}}>{{label}}</option>{{/each}}</select>
+        <button type="button" class="ocp-pbtn" data-action="add-preset" title="{{localize "OCEAN.control.preset.add"}}"><i class="fa-solid fa-plus"></i></button>
+      </div>
+    </div>
+    <div class="ocp-pcard ocp-pcard--light">
+      <div class="ocp-pcard__lb"><i class="fa-solid fa-sun"></i> {{localize "OCEAN.control.preset.light"}}</div>
+      <div class="ocp-pcard__row">
+        <select data-light-preset>{{#each presets.light}}<option value="{{value}}" {{#if selected}}selected{{/if}}>{{label}}</option>{{/each}}</select>
+      </div>
+    </div>
+  </div>
+
+  {{#if newPresetOpen}}
+    <div class="ocp-newform">
+      <input type="text" data-preset-name placeholder="{{localize "OCEAN.control.preset.namePlaceholder"}}">
+      <button type="button" class="ocp-nbtn" data-action="save-preset">{{localize "OCEAN.control.preset.save"}}</button>
+      <button type="button" class="ocp-nbtn ghost" data-action="cancel-preset">{{localize "OCEAN.control.preset.cancel"}}</button>
+    </div>
+  {{/if}}
+
+  {{#if edit}}{{#if presets.customList.length}}
+    <div class="ocp-custlist">
+      <span>{{localize "OCEAN.control.preset.manage"}}</span>
+      {{#each presets.customList}}<span class="ocp-tag">{{label}} <i class="fa-solid fa-trash" data-del-preset="{{key}}" title="{{localize "OCEAN.control.preset.delete"}}"></i></span>{{/each}}
+    </div>
+  {{/if}}{{/if}}
+
+  <div class="ocp-main">
+    <div class="ocp-stage">
+      {{#if isSearch}}
+        <div class="ocp-shead"><i class="fa-solid fa-magnifying-glass"></i> {{localize "OCEAN.control.search.results"}} <span class="ocp-tab__ct">{{searchCount}}</span></div>
+        {{#if searchEmpty}}
+          <div class="ocp-empty">{{localize "OCEAN.control.search.empty"}}</div>
+        {{else}}
+          {{#each searchGroups}}
+            <div class="ocp-sub">{{label}}</div>
+            {{#each items}}{{> ocpRow}}{{/each}}
+          {{/each}}
+        {{/if}}
+      {{else}}
+      {{#if isFav}}
+        <div class="ocp-shead"><i class="fa-solid fa-star"></i> {{localize "OCEAN.control.sections.favorites"}}</div>
+        {{#if favEmpty}}
+          <div class="ocp-empty">{{localize "OCEAN.control.fav.empty"}}</div>
+        {{else}}
+          <div class="ocp-favgrid">{{#each favItems}}{{> ocpRow}}{{/each}}</div>
+        {{/if}}
+      {{else}}
+        <div class="ocp-shead"><i class="fa-solid {{cat.icon}}"></i> {{cat.label}}</div>
+        {{#if cat.isIdle}}
+          {{#each cat.items}}{{> ocpRow}}{{/each}}
+          {{#if cat.hasDebug}}
+            <div class="ocp-sub">{{localize "OCEAN.control.subheads.debug"}}</div>
+            <div class="ocp-row"><div class="ocp-row__label">{{localize "OCEAN.debug.view"}}</div><div class="ocp-row__ctl"><select data-debug-view>{{#each cat.debugViews}}<option value="{{key}}" {{#if selected}}selected{{/if}}>{{label}}</option>{{/each}}</select></div></div>
+            <div class="ocp-effects">
+              {{#each cat.effects}}
+                <div class="ocp-effect">
+                  <div class="ocp-effect__main">
+                    <label><input type="checkbox" data-effect="{{key}}" {{#if checked}}checked{{/if}}> {{label}}</label>
+                    <span>{{hint}}</span>
+                    {{#if strengthKey}}<div class="ocp-row__ctl"><input type="range" data-strength="{{strengthKey}}" min="{{min}}" max="{{max}}" step="{{step}}" value="{{strength}}"><span class="ocp-val" data-strength-value="{{strengthKey}}">{{strength}}</span></div>{{/if}}
+                  </div>
+                  <button type="button" data-only="{{key}}">{{localize "OCEAN.debug.only"}}</button>
+                </div>
+              {{/each}}
+            </div>
+            <div class="ocp-sub">{{localize "OCEAN.control.subheads.capture"}}</div>
+            <div class="ocp-steps">
+              {{#each cat.steps}}
+                <div class="ocp-step">
+                  <div class="ocp-step__main"><strong>{{title}}</strong><span>{{hint}}</span><span class="ocp-filename">{{filename}}</span></div>
+                  <button type="button" class="{{#if active}}active{{/if}}" data-capture-step="{{key}}">{{#if active}}{{localize "OCEAN.capture.active"}}{{else}}{{localize "OCEAN.capture.apply"}}{{/if}}</button>
+                </div>
+              {{/each}}
+            </div>
+            <div class="ocp-toolbar"><button type="button" data-action="reset">{{localize "OCEAN.debug.reset"}}</button></div>
+          {{/if}}
+        {{else}}
+          {{#each cat.normal}}{{> ocpRow}}{{/each}}
+          {{#if cat.hasAdvanced}}
+            <details class="ocp-adv" data-adv="{{cat.id}}" {{#if cat.advOpen}}open{{/if}}>
+              <summary class="ocp-adv__sum"><i class="fa-solid fa-sliders"></i><span>{{localize "OCEAN.control.advanced"}}</span><i class="fa-solid fa-chevron-down ocp-adv__chev"></i></summary>
+              <div class="ocp-adv__body">
+                {{#each cat.advanced}}{{> ocpRow}}{{/each}}
+              </div>
+            </details>
+          {{/if}}
+        {{/if}}
+      {{/if}}
+      {{/if}}
+    </div>
+
+    <div class="ocp-tabs">
+      {{#each tabs}}
+        <div class="ocp-tab{{#if active}} is-active{{/if}}{{#if idle}} is-idle{{/if}}" data-tab="{{id}}">
+          <i class="fa-solid {{icon}}"></i><span>{{label}}</span><span class="ocp-tab__ct">{{count}}</span>
+        </div>
+      {{/each}}
+    </div>
+  </div>
+</form>
