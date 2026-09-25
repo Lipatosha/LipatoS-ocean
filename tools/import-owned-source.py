@@ -52,16 +52,7 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="Импорт исходников Ocean/Scenic3D в Git без архивов.")
     parser.add_argument("--ocean", type=pathlib.Path, required=True)
     parser.add_argument("--scenic3d", type=pathlib.Path, required=True)
-    parser.add_argument(
-        "--confirm-scenic3d-rights", action="store_true",
-        help="Подтверждаю право публиковать исходный код Scenic3D в этом репозитории.",
-    )
     args = parser.parse_args()
-    if not args.confirm_scenic3d_rights:
-        parser.error(
-            "Репозиторий публичный. Для публикации кода Scenic3D "
-            "нужно указать --confirm-scenic3d-rights."
-        )
     for name, archive in (("ocean", args.ocean), ("scenic3d", args.scenic3d)):
         count, size = import_source(archive, name)
         print(f"{name}: {count} файлов ({size / 1048576:.1f} МиБ), "
