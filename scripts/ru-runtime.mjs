@@ -100,7 +100,9 @@ function translateAddedNode(node) {
     translateElement(node);
     return;
   }
-  for (const root of node.querySelectorAll(OCEAN_UI_SELECTOR)) translateElement(root);
+  for (const root of node.querySelectorAll(OCEAN_UI_SELECTOR)) {
+    if (!root.parentElement?.closest(OCEAN_UI_SELECTOR)) translateElement(root);
+  }
 }
 
 async function applyI18nOverrides() {
@@ -122,7 +124,9 @@ Hooks.once("ready", async () => {
     console.error(`${MODULE_ID} | Не удалось загрузить русскую локализацию`, error);
   }
 
-  for (const root of document.querySelectorAll(OCEAN_UI_SELECTOR)) translateElement(root);
+  for (const root of document.querySelectorAll(OCEAN_UI_SELECTOR)) {
+    if (!root.parentElement?.closest(OCEAN_UI_SELECTOR)) translateElement(root);
+  }
 
   const pending = new Set();
   let scheduled = false;
