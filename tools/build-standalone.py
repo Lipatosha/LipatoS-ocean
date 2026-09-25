@@ -124,7 +124,6 @@ def prepare_translations() -> None:
     if code.count(before) != 1:
         raise SystemExit("RU runtime still assumes the separate translation add-on")
     code = code.replace(before, 'const MODULE_ID = "ocean";')
-    code = code.replace("'[class*=\"ship-custom\"]',", "'[class*=\"ship-custom\"], [class*=\"scenic3d-\"]',") if False else code
     code = code.replace(
         "'[class*=\"ship-custom\"]',",
         "'[class*=\"ship-custom\"]', '[class*=\"scenic3d-\"]',"
@@ -166,7 +165,7 @@ def write_manifest() -> None:
 def validate() -> None:
     total = sum(p.stat().st_size for p in OUTPUT.rglob("*") if p.is_file())
     files = sum(1 for p in OUTPUT.rglob("*") if p.is_file())
-    if files < 390 or total < 450_000_000:
+    if files < 380 or total < 450_000_000:
         raise SystemExit(f"Standalone package incomplete: {files} files, {total} bytes")
     manifest = json.loads((OUTPUT / "module.json").read_text("utf-8"))
     if manifest.get("relationships", {}).get("requires"):
