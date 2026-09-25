@@ -1,13 +1,6 @@
 name: Build standalone LipatoS Ocean
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - "upstream/**"
-      - "tools/build-standalone.py"
-      - "lang/scenic-ru.json"
-      - ".github/workflows/standalone.yml"
   workflow_dispatch:
 
 permissions:
