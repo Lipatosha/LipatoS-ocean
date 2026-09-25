@@ -1,0 +1,62 @@
+name: Release LipatoS Ocean RU
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/release.yml"
+      - "module.json"
+      - "lang/**"
+      - "scripts/**"
+      - "README.md"
+      - "docs/**"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate JavaScript and localization
+        shell: bash
+        run: |
+          set -euo pipefail
+          find scripts -type f \( -name '*.mjs' -o -name '*.js' \) -print0 | xargs -0 -n1 node --check
+          node scripts/tests/validate.mjs
+
+      - name: Read module version
+        id: version
+        shell: bash
+        run: |
+          echo "value=$(jq -r '.version' module.json)" >> "$GITHUB_OUTPUT"
+
+      - name: Assemble Foundry module
+        shell: bash
+        run: |
+          set -euo pipefail
+          zip -q lipatos-ocean.zip \
+            module.json lang/ru.json \
+            scripts/ru-runtime.mjs scripts/ship-strings.mjs \
+            scripts/ship-catalog-strings.mjs scripts/ship-family-strings.mjs \
+            scripts/message-strings.mjs README.md
+
+      - name: Publish release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ steps.version.outputs.value }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          TAG="v$VERSION"
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            echo "Release $TAG already exists; refusing to silently replace published files."
+            exit 1
+          fi
+          gh release create "$TAG" lipatos-ocean.zip module.json \
+            --target "$GITHUB_SHA" \
+            --title "LipatoS — Ocean RU $TAG" \
+            --notes "Русская локализация Ocean 2.0.3 для Foundry VTT 14: 619/619 ключей словаря, 473 дополнительные строки интерфейса и 15 шаблонов сообщений. Требует установленный Ocean и Scenic3D."
